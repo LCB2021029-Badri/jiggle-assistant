@@ -3,6 +3,7 @@ package com.example.jigglevoiceassistant.assistant
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
+import android.provider.ContactsContract
 import android.provider.Telephony
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -416,6 +418,140 @@ class AssistantActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intentShare, "Sharing Text"))
         }
     }
+
+
+
+    private fun callContact() {
+        if (ContextCompat.checkSelfPermission(
+                this@AssistantActivity,
+                Manifest.permission.READ_CONTACTS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@AssistantActivity,
+                arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS),
+                READCONTACTS
+            )
+        }
+        else
+        {
+            val name = keeper.split("call").toTypedArray()[1].trim { it <= ' ' }
+            Log.d("chk", name)
+            try {
+                val cursor = contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.TYPE),
+                    "DISPLAY_NAME = '$name'", null, null)
+                cursor!!.moveToFirst()
+                val number = cursor.getString(0)
+                // number must not have any spaces
+                if (number.trim { it <= ' ' }.length > 0) {
+
+                    // runtime message
+                    if (ContextCompat.checkSelfPermission(this@AssistantActivity,
+                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.CALL_PHONE), REQUESTCALL)
+                    } else {
+                        // passing intent
+                        val dial = "tel:$number"
+                        startActivity(Intent(Intent.ACTION_CALL, Uri.parse(dial)))
+                    }
+                } else {
+                    // invalid phone
+                    Toast.makeText(this@AssistantActivity, "Enter Phone Number", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                speak("Something went wrong")
+            }
+        }
+    }
+
+
+    private fun turnOnBluetooth() {
+        if (!bluetoothAdapter.isEnabled()) {
+            speak("Turning On Bluetooth...")
+            //intent to on bluetooth
+            val intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            startActivityForResult(intent, REQUEST_ENABLE_BT)
+        } else {
+            speak("Bluetooth is already on")
+        }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private fun turnOffBluetooth() {
+        if (bluetoothAdapter.isEnabled()) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            bluetoothAdapter.disable()
+            speak("Turning Bluetooth Off")
+        } else {
+            speak("Bluetooth is already off")
+        }
+    }
+
+
+    private fun getAllPairedDevices() {
+        if (bluetoothAdapter.isEnabled()) {
+            speak("Paired Devices are ")
+            var text = ""
+            var count = 1
+            val devices: Set<BluetoothDevice> = bluetoothAdapter.getBondedDevices()
+            for (device in devices) {
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return
+                }
+                text += "\nDevice: $count ${device.name}, $device"
+                count += 1
+            }
+            speak(text)
+        } else {
+            //bluetooth is off so can't get paired devices
+            speak("Turn on bluetooth to get paired devices")
+        }
+    }
+
+
+
+
 
 
 
