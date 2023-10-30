@@ -13,6 +13,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.os.StrictMode
 import android.provider.Telephony
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -384,6 +385,36 @@ class AssistantActivity : AppCompatActivity() {
         val intent = packageManager.getLaunchIntentForPackage("com.google.android.apps.maps")
         intent?.let { startActivity(it) }
         speak("Maps Opened for your location!")
+    }
+
+    private fun shareAFile() {
+        if (ContextCompat.checkSelfPermission(this@AssistantActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), SHAREAFILE)
+        }
+        else{
+            val builder = StrictMode.VmPolicy.Builder()
+            StrictMode.setVmPolicy(builder.build())
+            val myFileIntent = Intent(Intent.ACTION_GET_CONTENT)
+            myFileIntent.type = "application/pdf"
+            startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC)
+        }
+    }
+
+    private fun shareATextMessage() {
+        if (ContextCompat.checkSelfPermission(this@AssistantActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), SHAREATEXTFILE)
+        }
+        else{
+            val builder = StrictMode.VmPolicy.Builder()
+            StrictMode.setVmPolicy(builder.build())
+            val message = keeper.split("that").toTypedArray()[1]
+            //        String subject = keeper.split("with")[1];
+            val intentShare = Intent(Intent.ACTION_SEND)
+            intentShare.type = "text/plain"
+            //        intentShare.putExtra(Intent.EXTRA_SUBJECT,subject);
+            intentShare.putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(Intent.createChooser(intentShare, "Sharing Text"))
+        }
     }
 
 
