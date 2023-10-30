@@ -13,10 +13,12 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Telephony
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.telephony.SmsManager
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
@@ -307,7 +309,6 @@ class AssistantActivity : AppCompatActivity() {
         speak("The date is $date")
     }
 
-
     private fun makeAPhoneCall() {
         val keeperSplit = keeper.replace(" ".toRegex(), "").split("o").toTypedArray()
         val number = keeperSplit[2]
@@ -324,6 +325,41 @@ class AssistantActivity : AppCompatActivity() {
             // invalid phone
             Toast.makeText(this@AssistantActivity, "Enter Phone Number", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun sendSMS() {
+        Log.d("keeper", "Done0")
+        if (ContextCompat.checkSelfPermission(this@AssistantActivity, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.SEND_SMS), SENDSMS)
+            Log.d("keeper", "Done1")
+        }
+        else{
+            Log.d("keeper", "Done2")
+            val keeperReplaced = keeper.replace(" ".toRegex(), "")
+            val number = keeperReplaced.split("o").toTypedArray()[1].split("t").toTypedArray()[0]
+            val message = keeper.split("that").toTypedArray()[1]
+            Log.d("chk", number + message)
+            val mySmsManager = SmsManager.getDefault()
+            mySmsManager.sendTextMessage(number.trim { it <= ' ' }, null, message.trim { it <= ' ' }, null, null)
+            speak("Message sent that $message")
+        }
+    }
+
+    private fun readSMS() {
+        if (ContextCompat.checkSelfPermission(this@AssistantActivity, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.READ_SMS), READSMS)
+        }
+        else {
+            val cursor = contentResolver.query(Uri.parse("content://sms"), null, null, null, null)
+            cursor!!.moveToFirst()
+            speak("Your last message was " + cursor.getString(12))
+        }
+    }
+
+    private fun openMessages() {
+        val intent = packageManager.getLaunchIntentForPackage(Telephony.Sms.getDefaultSmsPackage(this))
+        intent?.let { startActivity(it) }
+        speak("Message Opened!")
     }
 
 
