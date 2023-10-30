@@ -9,33 +9,39 @@
             type="com.example.jigglevoiceassistant.assistant.AssistantViewModel" />
     </data>
 
-    <RelativeLayout
-        android:padding="8dp"
-        tools:context=".assistant.AssistantActivity"
-        android:background="@color/myBackground"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/assistant_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/myBackground"
+        tools:context=".MainActivity">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="16dp"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            tools:listitem="@layout/rv_assistant_chat_item"
-            android:layout_above="@id/fab1" />
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab1"
-            android:layout_marginTop="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_mic"
-            android:backgroundTint="@color/white"
-            android:layout_centerHorizontal="true"/>
+            android:layout_margin="20dp"
+            android:contentDescription="Mic Start"
+            app:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_mic"
+            tools:ignore="ImageContrastCheck" />
 
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

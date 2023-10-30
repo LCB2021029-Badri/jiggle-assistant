@@ -13,9 +13,6 @@
         android:id="@+id/assistant_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginLeft="8dp"
         android:background="@drawable/assistant_msg_bg"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/myWhite"
@@ -26,16 +23,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+
+
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="8dp"
+        />
 
 
     <TextView
         android:id="@+id/human_message"
         style="@android:style/Widget.TextView"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="2dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/human_msg_bg"
@@ -48,6 +47,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/assistant_message"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="2dp"
+        />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

@@ -1,6 +1,7 @@
 package com.example.jigglevoiceassistant.assistant
 
 import android.Manifest
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -9,6 +10,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.camera2.CameraManager
 import android.media.Ringtone
 import android.media.RingtoneManager
@@ -28,6 +30,8 @@ import android.speech.tts.TextToSpeech
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewAnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -42,6 +46,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -793,18 +798,54 @@ class AssistantActivity : AppCompatActivity() {
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SELECT_DOC && resultCode == RESULT_OK) {
+            val filePath = data!!.data!!.path
+            Log.d("chk", "path: $filePath")
+            val file= File(filePath)
+            val intentShare = Intent(Intent.ACTION_SEND)
+            intentShare.type = "application/pdf"
+            intentShare.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://$file"))
+            startActivity(Intent.createChooser(intentShare, "Share the file ..."))
+        }
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                speak("Bluetooth is on")
+            } else {
+                speak("Could'nt turn on bluetooth")
+            }
+        }
+
+        // @TODO crop image
+
+//        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
+//            val imageUri = CropImage.getPickImageResultUri(this, data)
+//            imgUri = imageUri
+//            startCrop(imageUri)
+//        }
+//
+//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+//            val result : CropImage.ActivityResult = CropImage.getActivityResult(data)
+//            if (resultCode == RESULT_OK) {
+//                imgUri = result.uri
+//                try {
+//                    val inputStream = contentResolver.openInputStream(imgUri)
+//                    val bitmap = BitmapFactory.decodeStream(inputStream)
+//                    getTextFromBitmap(bitmap)
+//                } catch (e: FileNotFoundException) {
+//                    e.printStackTrace()
+//                }
+//                Toast.makeText(this, "Image captured successfully !", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+    }
 
 
-
-
-
-
-
-
-
-
-
-
+    private fun startCrop(imageUri: Uri) {
+        //@TODO crop image
+//        CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this@AssistantActivity)
+    }
 
     private fun getTextFromBitmap(bitmap: Bitmap) {
         val image = InputImage.fromBitmap(bitmap, 0)
@@ -839,11 +880,15 @@ class AssistantActivity : AppCompatActivity() {
     }
 
 
-
-
-
-
-
-
-
+    override fun onDestroy() {
+        super.onDestroy()
+        // destroying
+        textToSpeech.stop()
+        textToSpeech.shutdown()
+        speechRecognizer.cancel()
+        speechRecognizer.destroy()
+        Log.i(logsr, "destroy")
+        Log.i(logtts, "destroy")
+    }
+    
 }
