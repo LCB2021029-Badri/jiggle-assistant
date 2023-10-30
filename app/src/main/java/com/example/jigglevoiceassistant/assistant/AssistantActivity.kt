@@ -8,6 +8,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.hardware.camera2.CameraManager
 import android.media.Ringtone
 import android.media.RingtoneManager
@@ -37,12 +38,16 @@ import com.example.jigglevoiceassistant.R
 import com.example.jigglevoiceassistant.data.AssistantDatabase
 import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
 import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.jvm.internal.Ref
 
 class AssistantActivity : AppCompatActivity() {
 
@@ -81,7 +86,7 @@ class AssistantActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/assistant/"
 
-//    @TODO weather api
+//    @TODO weather api private lateinit var helper: OpenWeatherMapHelper
 //    @TODO horoscope api
 
     @SuppressLint("ClickableViewAccessibility")
@@ -626,6 +631,132 @@ class AssistantActivity : AppCompatActivity() {
             startActivity(cameraIntent)
             speak("Photo  will be saved to $file")
         }
+    }
+
+    private fun playRingtone() {
+        speak("Ringtone playing")
+        ringtone.play()
+    }
+
+    private fun stopRingtone() {
+        speak("Ringtone stopped")
+        ringtone.stop()
+    }
+
+    private fun readMe() {
+        //read image
+        // @TODO  CropImage.startPickImageActivity(this@AssistantActivity)
+    }
+
+
+    private fun setAlarm() {
+        val intent = packageManager.getLaunchIntentForPackage("com.android.alarm")
+        intent?.let { startActivity(it) }
+    }
+
+    private fun weather() {
+//        if(keeper.contains("Fahrenheit")) {
+//            helper.setUnits(Units.IMPERIAL)
+//        }
+//        else if(keeper.contains("Celsius")) {
+//            helper.setUnits(Units.METRIC)
+//        }
+//        val keeperSplit = keeper.replace(" ".toRegex(), "").split("w").toTypedArray()
+//        val city = keeperSplit[0]
+//        Log.d("chk","the city is" + keeperSplit)
+//
+//        helper.getCurrentWeatherByCityName(city, object : CurrentWeatherCallback {
+//            override fun onSuccess(currentWeather: CurrentWeather) {
+//                speak("""
+//    Coordinates: ${currentWeather.coord.lat}, ${currentWeather.coord.lon}
+//    Weather Description: ${currentWeather.weather[0].description}
+//    Temperature: ${currentWeather.main.tempMax}
+//    Wind Speed: ${currentWeather.wind.speed}
+//    City, Country: ${currentWeather.name}, ${currentWeather.sys.country}
+//    """.trimIndent()
+//                )
+//            }
+//
+//            override fun onFailure(throwable: Throwable) {
+//                speak("Error" + throwable.message)
+//            }
+//        })
+    }
+
+
+    private fun horoscope() {
+//        val hGemini = Horoscope.Zodiac(this@AssistantActivity)
+//            .requestSunSign(SUNSIGN.GEMINI)
+//            .requestDuration(DURATION.TODAY)
+//            .showLoader(true)
+//            .isDebuggable(true)
+//            .fetchHoroscope()
+//        val cGemini = HorologyController(object : Response {
+//            override fun onResponseObtained(zodiac: Zodiac) {
+//                val horoscope = zodiac.horoscope
+//                val sunsign = zodiac.sunSign
+//                val date = zodiac.date
+//            }
+//
+//            override fun onErrorObtained(errormsg: String) {}
+//        })
+//        cGemini.requestConstellations(hGemini)
+    }
+
+    private fun joke()
+    {
+
+    }
+
+    private fun question()
+    {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private fun getTextFromBitmap(bitmap: Bitmap) {
+        val image = InputImage.fromBitmap(bitmap, 0)
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        val result = recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                // Task completed successfully
+                // ...
+                val resultText = visionText.text
+                if(keeper.contains("summarise"))
+                {
+                    speak("Reading Image and Summarising it :\n" + summariseText(resultText))
+                }
+                else {
+                    speak("Reading Image:\n" + resultText)
+
+                }
+            }
+            .addOnFailureListener { e ->
+                // Task failed with an exception
+                // ...
+                Toast.makeText(this@AssistantActivity, "Error: " + e.message, Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun summariseText(text: String): String? {
+        // @TODO Text summarizer
+        val summary: Ref.ObjectRef<*> = Ref.ObjectRef<Any?>()
+//        summary.element = Text2Summary.Companion.summarize(text, 0.4f) as Nothing?
+        return summary.element as String
     }
 
 
