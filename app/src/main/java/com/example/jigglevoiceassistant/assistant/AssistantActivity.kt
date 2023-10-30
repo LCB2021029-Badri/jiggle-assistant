@@ -714,6 +714,85 @@ class AssistantActivity : AppCompatActivity() {
     }
 
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUESTCALL) {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                makeAPhoneCall()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == SENDSMS)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                sendSMS()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == READSMS)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                readSMS()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == SHAREAFILE)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                shareAFile()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == SHAREATEXTFILE)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                shareATextMessage()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == READCONTACTS)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                callContact()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if(requestCode == CAPTUREPHOTO)
+        {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // when permission granted
+                capturePhoto()
+            } else {
+                // permission denied
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 
 
 
