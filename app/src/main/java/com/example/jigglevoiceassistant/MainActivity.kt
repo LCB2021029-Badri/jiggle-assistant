@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.jigglevoiceassistant.assistant.AssistantActivity
 import com.example.jigglevoiceassistant.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
