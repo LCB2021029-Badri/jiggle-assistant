@@ -83,6 +83,7 @@ class AssistantActivity : AppCompatActivity() {
                 adapter.data = it
             }
         })
+        binding.setLifecycleOwner(this)
 
 
     }
