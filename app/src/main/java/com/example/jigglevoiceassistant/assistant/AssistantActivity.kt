@@ -669,10 +669,11 @@ class AssistantActivity : AppCompatActivity() {
         else if(keeper.contains("Celsius")) {
             helper.setUnits(Units.METRIC)
         }
-        val keeperSplit = keeper.replace(" ".toRegex(), "").split("w").toTypedArray()
+        val keeperSplit = keeper.replace(" ".toRegex(), "").split("weather").toTypedArray()
         val city = keeperSplit[0]
         Log.d("chk","the city is" + keeperSplit)
 
+//        helper.getCurrentWeatherByCityName("Lucknow", object : CurrentWeatherCallback {
         helper.getCurrentWeatherByCityName(city, object : CurrentWeatherCallback {
             override fun onSuccess(currentWeather: CurrentWeather) {
                 speak("""
@@ -686,7 +687,7 @@ class AssistantActivity : AppCompatActivity() {
             }
 
             override fun onFailure(throwable: Throwable) {
-                speak("Error" + throwable.message)
+                speak("Error " + throwable.message)
             }
         })
     }
