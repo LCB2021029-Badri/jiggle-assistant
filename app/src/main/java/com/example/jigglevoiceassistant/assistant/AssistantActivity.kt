@@ -1,9 +1,11 @@
 package com.example.jigglevoiceassistant.assistant
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.camera2.CameraManager
 import android.media.Ringtone
 import android.media.RingtoneManager
@@ -17,6 +19,9 @@ import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +29,9 @@ import com.example.jigglevoiceassistant.R
 import com.example.jigglevoiceassistant.data.AssistantDatabase
 import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class AssistantActivity : AppCompatActivity() {
@@ -250,6 +258,72 @@ class AssistantActivity : AppCompatActivity() {
         })
 
 
+        // check if speech recognition available
+        checkIfSpeechRecognizerAvailable()
+
+
+        // holding FAB
+        binding.fab1.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    textToSpeech.stop()
+                    speechRecognizer.startListening(recognizerIntent)
+                }
+                MotionEvent.ACTION_UP -> {
+                    speechRecognizer.stopListening()
+                }
+            }
+            false
+        }
+
+
+
+    }
+
+
+    private fun checkIfSpeechRecognizerAvailable() {
+        if(SpeechRecognizer.isRecognitionAvailable(this)) { Log.d(logsr, "yes") }
+        else { Log.d(logsr, "false") }
+    }
+
+    fun speak(text: String) {
+        // speaking TextToSpeech
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+        assistantViewModel.sendMessageToDatabase(keeper, text)
+    }
+
+    fun getTime() {
+        val calendar = Calendar.getInstance()
+        val format = SimpleDateFormat("HH:mm:ss")
+        val time: String = format.format(calendar.getTime())
+        speak("The time is $time")
+    }
+
+    fun getDate() {
+        val calendar = Calendar.getInstance()
+        val formattedDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
+        val splitDate = formattedDate.split(",").toTypedArray()
+        val date = splitDate[1].trim { it <= ' ' }
+        speak("The date is $date")
+    }
+
+
+    private fun makeAPhoneCall() {
+        val keeperSplit = keeper.replace(" ".toRegex(), "").split("o").toTypedArray()
+        val number = keeperSplit[2]
+        if (number.trim { it <= ' ' }.length > 0) {
+            if (ContextCompat.checkSelfPermission(this@AssistantActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this@AssistantActivity, arrayOf(Manifest.permission.CALL_PHONE), REQUESTCALL)
+            } else {
+                // passing intent
+                val dial = "tel:$number"
+                speak("Calling $number")
+                startActivity(Intent(Intent.ACTION_CALL, Uri.parse(dial)))
+            }
+        } else {
+            // invalid phone
+            Toast.makeText(this@AssistantActivity, "Enter Phone Number", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
