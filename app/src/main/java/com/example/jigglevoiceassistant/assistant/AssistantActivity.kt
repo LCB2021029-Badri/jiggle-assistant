@@ -52,7 +52,8 @@ class AssistantActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/assistant/"
 
-//    private lateinit var helper: OpenWeatherMapHelper
+//    @TODO weather api
+//    @TODO horoscope api
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
