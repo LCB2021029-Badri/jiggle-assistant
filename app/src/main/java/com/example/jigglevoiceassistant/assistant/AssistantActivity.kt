@@ -18,6 +18,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.provider.Telephony
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -36,6 +37,8 @@ import com.example.jigglevoiceassistant.R
 import com.example.jigglevoiceassistant.data.AssistantDatabase
 import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
+import java.io.File
+import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -592,6 +595,40 @@ class AssistantActivity : AppCompatActivity() {
             speak("Clipboard is Empty")
         }
     }
+
+    private fun capturePhoto() {
+        if (ContextCompat.checkSelfPermission(
+                this@AssistantActivity,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@AssistantActivity,
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                CAPTUREPHOTO
+            )
+        }
+        else
+        {
+            val builder = StrictMode.VmPolicy.Builder()
+            StrictMode.setVmPolicy(builder.build())
+            imageIndex++
+            val file: String = imageDirectory + imageIndex + ".jpg"
+            val newFile = File(file)
+            try {
+                newFile.createNewFile()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val outputFileUri = Uri.fromFile(newFile)
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
+            startActivity(cameraIntent)
+            speak("Photo  will be saved to $file")
+        }
+    }
+
+
 
 
 
