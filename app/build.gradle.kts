@@ -40,6 +40,12 @@ android {
 
 }
 
+//repositories {
+//    maven{
+//        url = uri("https://jitpack.io")
+//    }
+//}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -72,13 +78,11 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:18.0.0")
 
-//    implementation("com.github.shubham0204:Text2Summary-Android:alpha-05")
 
-//    implementation("com.theartofdev.edmodo:android-image-cropper:2.8.0")
-
-//    implementation("com.github.KwabenBerko:OpenWeatherMap-Android-Library:2.1.0")
-
-//    implementation("the.bot.box:horoscope-api:1.0.2")
+    implementation("com.github.shubham0204:Text2Summary-Android:alpha-05")
+    implementation("com.theartofdev.edmodo:android-image-cropper:2.8.0")
+    implementation("com.github.KwabenBerko:OpenWeatherMap-Android-Library:2.1.0")
+    implementation("the.bot.box:horoscope-api:1.0.2")
 
 
 }
