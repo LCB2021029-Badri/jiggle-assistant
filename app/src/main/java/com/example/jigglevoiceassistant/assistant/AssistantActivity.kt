@@ -1,5 +1,6 @@
 package com.example.jigglevoiceassistant.assistant
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.ClipboardManager
 import android.content.Intent
@@ -11,7 +12,12 @@ import android.os.Bundle
 import android.os.Environment
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.jigglevoiceassistant.R
+import com.example.jigglevoiceassistant.data.AssistantDatabase
+import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
 
 class AssistantActivity : AppCompatActivity() {
@@ -55,8 +61,29 @@ class AssistantActivity : AppCompatActivity() {
 //    @TODO weather api
 //    @TODO horoscope api
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_assistant)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_assistant)
+
+
+        val application = requireNotNull(this).application
+        val dataSource = AssistantDatabase.getInstance(application).assistantDao
+        val viewModelFactory = AssistantViewModelFactory(dataSource, application)
+
+        assistantViewModel = ViewModelProvider(this, viewModelFactory)
+            .get(AssistantViewModel::class.java)
+        binding.assistantViewModel = assistantViewModel
+
+        val adapter = AssistantAdapter()
+        binding.recyclerView.adapter = adapter
+        assistantViewModel.messages.observe(this, Observer {
+            it?.let {
+                adapter.data = it
+            }
+        })
+
+
     }
 }
