@@ -189,7 +189,11 @@ class AssistantActivity : AppCompatActivity() {
                     keeper = data[0]
                     Log.d(logkeeper, keeper)
                     when {
-                        keeper.contains("Hello") -> speak("Hello! How can I help you?")
+                        keeper.contains("creator") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("parent") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("father") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("mother") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("family") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
                         keeper.contains("thank") -> speak("It's my job, let me know if there is something else")
                         keeper.contains("welcome") -> speak("Always for you")
                         keeper.contains("clear") -> assistantViewModel.onClear()
