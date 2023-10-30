@@ -3,6 +3,17 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+        maven {
+            url = uri("https://dl.bintray.com/wotomas/maven")
+        }
+        jcenter() {
+            content {
+                includeModule("com.theartofdev.edmodo", "android-image-cropper")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -16,8 +27,11 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://dl.bintray.com/wotomas/maven")
         }
-
-
+        jcenter() {
+            content {
+                includeModule("com.theartofdev.edmodo", "android-image-cropper")
+            }
+        }
     }
 }
 

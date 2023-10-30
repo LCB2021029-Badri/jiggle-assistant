@@ -1,7 +1,6 @@
 package com.example.jigglevoiceassistant.assistant
 
 import android.Manifest
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -30,8 +29,6 @@ import android.speech.tts.TextToSpeech
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewAnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -45,6 +42,13 @@ import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.kwabenaberko.openweathermaplib.constant.Units
+import com.kwabenaberko.openweathermaplib.implementation.OpenWeatherMapHelper
+import com.kwabenaberko.openweathermaplib.implementation.callback.CurrentWeatherCallback
+import com.kwabenaberko.openweathermaplib.model.currentweather.CurrentWeather
+import com.ml.quaterion.text2summary.Text2Summary
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -91,8 +95,7 @@ class AssistantActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/assistant/"
 
-//    @TODO weather api private lateinit var helper: OpenWeatherMapHelper
-//    @TODO horoscope api
+    private lateinit var helper: OpenWeatherMapHelper
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +140,7 @@ class AssistantActivity : AppCompatActivity() {
         clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         ringtone = RingtoneManager.getRingtone(applicationContext, RingtoneManager.getDefaultUri(
             RingtoneManager.TYPE_RINGTONE))
-//        @TODO: helper = openweatherapi
+        helper = OpenWeatherMapHelper("e2f18082ff618ac5a563a175973a3360")
 
 
 
@@ -650,7 +653,7 @@ class AssistantActivity : AppCompatActivity() {
 
     private fun readMe() {
         //read image
-        // @TODO  CropImage.startPickImageActivity(this@AssistantActivity)
+        CropImage.startPickImageActivity(this@AssistantActivity)
     }
 
 
@@ -660,32 +663,32 @@ class AssistantActivity : AppCompatActivity() {
     }
 
     private fun weather() {
-//        if(keeper.contains("Fahrenheit")) {
-//            helper.setUnits(Units.IMPERIAL)
-//        }
-//        else if(keeper.contains("Celsius")) {
-//            helper.setUnits(Units.METRIC)
-//        }
-//        val keeperSplit = keeper.replace(" ".toRegex(), "").split("w").toTypedArray()
-//        val city = keeperSplit[0]
-//        Log.d("chk","the city is" + keeperSplit)
-//
-//        helper.getCurrentWeatherByCityName(city, object : CurrentWeatherCallback {
-//            override fun onSuccess(currentWeather: CurrentWeather) {
-//                speak("""
-//    Coordinates: ${currentWeather.coord.lat}, ${currentWeather.coord.lon}
-//    Weather Description: ${currentWeather.weather[0].description}
-//    Temperature: ${currentWeather.main.tempMax}
-//    Wind Speed: ${currentWeather.wind.speed}
-//    City, Country: ${currentWeather.name}, ${currentWeather.sys.country}
-//    """.trimIndent()
-//                )
-//            }
-//
-//            override fun onFailure(throwable: Throwable) {
-//                speak("Error" + throwable.message)
-//            }
-//        })
+        if(keeper.contains("Fahrenheit")) {
+            helper.setUnits(Units.IMPERIAL)
+        }
+        else if(keeper.contains("Celsius")) {
+            helper.setUnits(Units.METRIC)
+        }
+        val keeperSplit = keeper.replace(" ".toRegex(), "").split("w").toTypedArray()
+        val city = keeperSplit[0]
+        Log.d("chk","the city is" + keeperSplit)
+
+        helper.getCurrentWeatherByCityName(city, object : CurrentWeatherCallback {
+            override fun onSuccess(currentWeather: CurrentWeather) {
+                speak("""
+    Coordinates: ${currentWeather.coord.lat}, ${currentWeather.coord.lon}
+    Weather Description: ${currentWeather.weather[0].description}
+    Temperature: ${currentWeather.main.tempMax}
+    Wind Speed: ${currentWeather.wind.speed}
+    City, Country: ${currentWeather.name}, ${currentWeather.sys.country}
+    """.trimIndent()
+                )
+            }
+
+            override fun onFailure(throwable: Throwable) {
+                speak("Error" + throwable.message)
+            }
+        })
     }
 
 
@@ -696,6 +699,7 @@ class AssistantActivity : AppCompatActivity() {
 //            .showLoader(true)
 //            .isDebuggable(true)
 //            .fetchHoroscope()
+//
 //        val cGemini = HorologyController(object : Response {
 //            override fun onResponseObtained(zodiac: Zodiac) {
 //                val horoscope = zodiac.horoscope
@@ -817,34 +821,31 @@ class AssistantActivity : AppCompatActivity() {
             }
         }
 
-        // @TODO crop image
+        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
+            val imageUri = CropImage.getPickImageResultUri(this, data)
+            imgUri = imageUri
+            startCrop(imageUri)
+        }
 
-//        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-//            val imageUri = CropImage.getPickImageResultUri(this, data)
-//            imgUri = imageUri
-//            startCrop(imageUri)
-//        }
-//
-//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-//            val result : CropImage.ActivityResult = CropImage.getActivityResult(data)
-//            if (resultCode == RESULT_OK) {
-//                imgUri = result.uri
-//                try {
-//                    val inputStream = contentResolver.openInputStream(imgUri)
-//                    val bitmap = BitmapFactory.decodeStream(inputStream)
-//                    getTextFromBitmap(bitmap)
-//                } catch (e: FileNotFoundException) {
-//                    e.printStackTrace()
-//                }
-//                Toast.makeText(this, "Image captured successfully !", Toast.LENGTH_SHORT).show()
-//            }
-//        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result : CropImage.ActivityResult = CropImage.getActivityResult(data)
+            if (resultCode == RESULT_OK) {
+                imgUri = result.uri
+                try {
+                    val inputStream = contentResolver.openInputStream(imgUri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    getTextFromBitmap(bitmap)
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                }
+                Toast.makeText(this, "Image captured successfully !", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
     private fun startCrop(imageUri: Uri) {
-        //@TODO crop image
-//        CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this@AssistantActivity)
+        CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this@AssistantActivity)
     }
 
     private fun getTextFromBitmap(bitmap: Bitmap) {
@@ -873,9 +874,8 @@ class AssistantActivity : AppCompatActivity() {
     }
 
     private fun summariseText(text: String): String? {
-        // @TODO Text summarizer
         val summary: Ref.ObjectRef<*> = Ref.ObjectRef<Any?>()
-//        summary.element = Text2Summary.Companion.summarize(text, 0.4f) as Nothing?
+        summary.element = Text2Summary.Companion.summarize(text, 0.4f) as Nothing?
         return summary.element as String
     }
 
