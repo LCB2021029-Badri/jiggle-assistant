@@ -362,6 +362,30 @@ class AssistantActivity : AppCompatActivity() {
         speak("Message Opened!")
     }
 
+    private fun openFacebook() {
+        val intent = packageManager.getLaunchIntentForPackage("com.facebook.katana")
+        intent?.let { startActivity(it) }
+        speak("Facebook Opened!")
+    }
+
+    private fun openWhatsapp() {
+        val intent = packageManager.getLaunchIntentForPackage("com.whatsapp")
+        intent?.let { startActivity(it) }
+        speak("Whatsapp Opened!")
+    }
+
+    private fun openGmail() {
+        val intent = packageManager.getLaunchIntentForPackage("com.google.android.gm")
+        intent?.let { startActivity(it) }
+        speak("Gmail Opened!")
+    }
+
+    private fun openGoogle() {
+        val intent = packageManager.getLaunchIntentForPackage("com.google.android.apps.maps")
+        intent?.let { startActivity(it) }
+        speak("Maps Opened for your location!")
+    }
+
 
 
 }
