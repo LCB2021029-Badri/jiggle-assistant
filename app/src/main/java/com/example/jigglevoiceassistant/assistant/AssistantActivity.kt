@@ -713,10 +713,8 @@ class AssistantActivity : AppCompatActivity() {
             .baseUrl(HOROSCOPE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         val service = retrofit.create(HoroscopeService::class.java)
 
-//        val date = "2023-10-30"
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val date = sdf.format(Date())
         val language = "en"
