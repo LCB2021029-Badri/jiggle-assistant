@@ -39,6 +39,7 @@ import com.example.jigglevoiceassistant.R
 import com.example.jigglevoiceassistant.data.AssistantDatabase
 import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
+import com.example.jigglevoiceassistant.model.HoroscopeResponse
 import com.example.jigglevoiceassistant.util.HoroscopeService
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -50,6 +51,9 @@ import com.kwabenaberko.openweathermaplib.model.currentweather.CurrentWeather
 import com.ml.quaterion.text2summary.Text2Summary
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -710,10 +714,24 @@ class AssistantActivity : AppCompatActivity() {
 
         val date = "2023-10-30"
         val language = "en"
-        val response = service.getLibraHoroscope(date, language)
-        speak(response.horoscope)
 
+        val call = service.getLibraHoroscope(date, language)
+        call.enqueue(object : Callback<HoroscopeResponse> {
+            override fun onResponse(call: Call<HoroscopeResponse>, response: Response<HoroscopeResponse>) {
+                if (response.isSuccessful) {
+                    val horoscopeResponse = response.body()
+                    speak(horoscopeResponse?.horoscope ?: "No horoscope found.")
+                } else {
+                    speak("Failed to get horoscope. Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<HoroscopeResponse>, t: Throwable) {
+                speak("Failed to get horoscope. Error: ${t.message}")
+            }
+        })
     }
+
 
     private fun joke()
     {
