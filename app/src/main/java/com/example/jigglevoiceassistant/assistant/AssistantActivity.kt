@@ -713,28 +713,35 @@ class AssistantActivity : AppCompatActivity() {
             .baseUrl(HOROSCOPE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
         val service = retrofit.create(HoroscopeService::class.java)
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val date = sdf.format(Date())
+        val date = "2023-10-30"
         val language = "en"
+        val keeperSplit = keeper.replace(" ".toRegex(), "").split("horoscope").toTypedArray()
+        val zodiacSign = keeperSplit[0]
 
-        val call = service.getLibraHoroscope(date, language)
-        call.enqueue(object : Callback<HoroscopeResponse> {
+        val response = service.getZodiacHoroscope(zodiacSign, date, language)
+        response.enqueue(object : Callback<HoroscopeResponse> {
             override fun onResponse(call: Call<HoroscopeResponse>, response: Response<HoroscopeResponse>) {
                 if (response.isSuccessful) {
-                    val horoscopeResponse = response.body()
-                    speak(horoscopeResponse?.horoscope ?: "No horoscope found.")
+                    val horoscope = response.body()?.horoscope
+                    if (horoscope != null) {
+                        speak(zodiacSign + ", " + horoscope)
+                    } else {
+                        speak("Horoscope data not available.")
+                    }
                 } else {
-                    speak("Failed to get horoscope. Error: ${response.message()}")
+                    speak("Failed to retrieve horoscope data.")
                 }
             }
 
             override fun onFailure(call: Call<HoroscopeResponse>, t: Throwable) {
-                speak("Failed to get horoscope. Error: ${t.message}")
+                speak("Error: ${t.message}")
             }
         })
     }
+
 
     private fun joke()
     {
