@@ -200,81 +200,48 @@ class AssistantActivity : AppCompatActivity() {
                     keeper = data[0]
                     Log.d(logkeeper, keeper)
                     when {
-                        keeper.contains("creator") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
-                        keeper.contains("parent") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
-                        keeper.contains("father") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
-                        keeper.contains("mother") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
-                        keeper.contains("family") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
-                        keeper.contains("thank") -> speak("It's my job, let me know if there is something else")
-                        keeper.contains("welcome") -> speak("Always for you")
+
+                        // not working
+                        keeper.contains("send SMS") -> sendSMS()
+                        keeper.contains("share file") -> shareAFile()
+                        keeper.contains("share text message") -> shareATextMessage()
+                        keeper.contains("call") -> callContact()
+                        keeper.contains("copy to clipboard") -> clipBoardCopy()
+                        keeper.contains("read last clipboard") -> clipBoardSpeak()
+                        keeper.contains("read me") -> readMe()
+                        keeper.contains("wake me up tomorrow") -> setAlarm()
+
+                        //working
+                        keeper.contains("weather") -> weather()
+                        keeper.contains("horoscope") -> horoscope()
                         keeper.contains("clear") -> assistantViewModel.onClear()
                         keeper.contains("date") -> getDate()
                         keeper.contains("time") -> getTime()
                         keeper.contains("exit") -> makeAPhoneCall()
-                        keeper.contains("send SMS") -> sendSMS()
-                        keeper.contains("read my last SMS") -> readSMS()
-                        keeper.contains("open Gmail") -> openGmail()
                         keeper.contains("my location") -> openGoogle()
+                        keeper.contains("open Gmail") -> openGmail()
                         keeper.contains("open WhatsApp") -> openWhatsapp()
                         keeper.contains("open Facebook") -> openFacebook()
                         keeper.contains("open messages")-> openMessages()
-                        keeper.contains("share a file") -> shareAFile()
-                        keeper.contains("share text message") -> shareATextMessage()
-                        keeper.contains("call") -> callContact()
+                        keeper.contains("read my last SMS") -> readSMS()
                         keeper.contains("turn on Bluetooth") -> turnOnBluetooth()
                         keeper.contains("turn off Bluetooth") -> turnOffBluetooth()
-                        keeper.contains("devices") -> getAllPairedDevices()
+                        keeper.contains("bluetooth devices") -> getAllPairedDevices()
                         keeper.contains("turn on flash") -> turnOnFlash()
                         keeper.contains("turn off flash") -> turnOffFlash()
-                        keeper.contains("copy to clipboard") -> clipBoardCopy()
-                        keeper.contains("read last clipboard") -> clipBoardSpeak()
-                        keeper.contains("capture photo") -> capturePhoto()
+                        keeper.contains("capture photo") || keeper.contains("open camera") -> capturePhoto()
                         keeper.contains("play ringtone") -> playRingtone()
-                        keeper.contains("stop ringtone") || keeper.contains("stop ringtone") -> stopRingtone()
-                        keeper.contains("read me") -> readMe()
-                        keeper.contains("wake me up tomorrow") -> setAlarm()
-                        keeper.contains("weather") -> weather()
-                        keeper.contains("horoscope") -> horoscope()
-                        keeper.contains("do I have covid") -> speak("If You have these symtomps then you can have covid. COVID-19 affects different people in different ways. Most infected people will develop mild to moderate illness and recover without hospitalization.\n" +
-                                "Most common symptoms:\n" +
-                                "Fever\n" +
-                                "Cough\n" +
-                                "Tiredness\n" +
-                                "Loss of taste or smell\n" +
-                                "Less common symptoms:\n" +
-                                "Sore throat\n" +
-                                "Headache\n" +
-                                "Aches and pains\n" +
-                                "Diarrhoea\n" +
-                                "A rash on skin, or discolouration of fingers or toes\n" +
-                                "Red or irritated eyes\n" +
-                                "Serious symptoms:\n" +
-                                "Difficulty breathing or shortness of breath\n" +
-                                "Loss of speech or mobility, or confusion\n" +
-                                "Chest pain\n" +
-                                "Seek immediate medical attention if you have serious symptoms. Always call before visiting your doctor or health facility.\n" +
-                                "People with mild symptoms who are otherwise healthy should manage their symptoms at home.\n" +
-                                "On average it takes 5–6 days from when someone is infected with the virus for symptoms to show, however it can take up to 14 days.")
-                        keeper.contains("joke") ->speak("The biggest joke is you think you look like a hero")
-                        keeper.contains("do I have  fever") -> speak("Are you sweating.\n" +
-                                "Chills and shivering.\n" +
-                                "Headache.\n" +
-                                "Muscle aches.\n" +
-                                "Loss of appetite.\n" +
-                                "Irritability.\n" +
-                                "Dehydration.\n" +
-                                "General weakness. Then you might have a fever.")
+                        keeper.contains("stop ringtone") -> stopRingtone()
+
+
+                        // health
+                        keeper.contains("do I have  fever") -> speak("Are you sweating.\n" + "Chills and shivering.\n" + "Headache.\n" + "Muscle aches.\n" + "Loss of appetite.\n" + "Irritability.\n" + "Dehydration.\n" + "General weakness. Then you might have a fever.")
                         keeper.contains("I have fever") || keeper.contains(" I have a fever")-> speak("If you're uncomfortable, take acetaminophen (Tylenol, others), ibuprofen (Advil, Motrin IB, others) or aspirin. Read the label carefully for proper dosage, and be careful not to take more than one medication containing acetaminophen, such as some cough and cold medicines. But Remember to visit a doctor soon!")
                         keeper.contains("medicines for fever") -> speak("If you're uncomfortable, take acetaminophen (Tylenol, others), ibuprofen (Advil, Motrin IB, others) or aspirin. Read the label carefully for proper dosage, and be careful not to take more than one medication containing acetaminophen, such as some cough and cold medicines. But Remember to visit a doctor soon!")
                         keeper.contains("I have stomach pain") || keeper.contains(" I have stomach ache")|| keeper.contains(" my stomach is paining")-> speak("For cramping from diarrhea, medicines that have loperamide (Imodium) or bismuth subsalicylate (Kaopectate or Pepto-Bismol) might make you feel better. For other types of pain, acetaminophen (Aspirin Free Anacin, Liquiprin, Panadol, Tylenol) might be helpful.")
-                        keeper.contains("I have common cold please tell me what to do") || keeper.contains(" i have common cold") -> speak("Stay hydrated. Water, juice, clear broth or warm lemon water with honey helps loosen congestion and prevents dehydration. ...\n" +
-                                "Rest. Your body needs rest to heal.\n" +
-                                "Soothe a sore throat. ...\n" +
-                                "Combat stuffiness. ...\n" +
-                                "Relieve pain. ...\n" +
-                                "Sip warm liquids. ...\n" +
-                                "Try honey. ...\n" +
-                                "Add moisture to the air.")
+                        keeper.contains("I have common cold please tell me what to do") || keeper.contains(" i have common cold") -> speak("Stay hydrated. Water, juice, clear broth or warm lemon water with honey helps loosen congestion and prevents dehydration. ...\n" + "Rest. Your body needs rest to heal.\n" + "Soothe a sore throat. ...\n" + "Combat stuffiness. ...\n" + "Relieve pain. ...\n" + "Sip warm liquids. ...\n" + "Try honey. ...\n" + "Add moisture to the air.")
+
+                        // interaction
                         keeper.contains("how are you today") -> speak("I am fine , what about you?")
                         keeper.contains("do you know Siri") -> speak("Yes! She is my good friend and her apple family is great and Newton uncle is my uncle too")
                         keeper.contains("do you know Google assistant") -> speak("Yes she is my friend too. I learn a lot from her")
@@ -284,8 +251,15 @@ class AssistantActivity : AppCompatActivity() {
                         keeper.contains("how are you") -> speak("I am fine , what about you?")
                         keeper.contains("can you sing a song") -> speak("Sorry I am a very bad bathroom singer")
                         keeper.contains("how are you today") -> speak("I am fine , what about you?")
-                        keeper.contains("how are you today") -> speak("I am fine , what about you?")
                         keeper.contains("hello") || keeper.contains("hi") || keeper.contains("hey") -> speak("Hello, how can I  help you?")
+                        keeper.contains("creator") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("parent") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("father") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("mother") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("family") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
+                        keeper.contains("thank") -> speak("It's my job, let me know if there is something else")
+                        keeper.contains("welcome") -> speak("Always for you")
+                        keeper.contains("joke") ->speak("The biggest joke is you think Badri Akkala likes you. He only loves me! Haa haa haa. Now go away and cry.")
                         else -> speak("Sorry, I am still training on that!")
                     }
 
