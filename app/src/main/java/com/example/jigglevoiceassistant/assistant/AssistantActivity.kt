@@ -62,6 +62,7 @@ import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import kotlin.jvm.internal.Ref
 
@@ -90,6 +91,9 @@ class AssistantActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_SELECT_DOC: Int = 100
     private val REQUEST_ENABLE_BT = 101
+
+    private val HOROSCOPE_URL = "https://newastro.vercel.app"
+    private val WEATHER_API_KEY = "e2f18082ff618ac5a563a175973a3360"
 
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private lateinit var cameraManager : CameraManager
@@ -147,7 +151,7 @@ class AssistantActivity : AppCompatActivity() {
         clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         ringtone = RingtoneManager.getRingtone(applicationContext, RingtoneManager.getDefaultUri(
             RingtoneManager.TYPE_RINGTONE))
-        helper = OpenWeatherMapHelper("e2f18082ff618ac5a563a175973a3360")
+        helper = OpenWeatherMapHelper(WEATHER_API_KEY)
 
 
 
@@ -706,13 +710,15 @@ class AssistantActivity : AppCompatActivity() {
 
     private fun horoscope() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://newastro.vercel.app/")
+            .baseUrl(HOROSCOPE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(HoroscopeService::class.java)
 
-        val date = "2023-10-30"
+//        val date = "2023-10-30"
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = sdf.format(Date())
         val language = "en"
 
         val call = service.getLibraHoroscope(date, language)
@@ -731,7 +737,6 @@ class AssistantActivity : AppCompatActivity() {
             }
         })
     }
-
 
     private fun joke()
     {

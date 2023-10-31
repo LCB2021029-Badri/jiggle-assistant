@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface HoroscopeService {
-    @GET("libra")
+    @GET("/libra")
     fun getLibraHoroscope(
         @Query("date") date: String,
         @Query("lang") language: String
