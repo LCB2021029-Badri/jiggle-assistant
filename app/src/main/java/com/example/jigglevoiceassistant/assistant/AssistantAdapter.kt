@@ -28,7 +28,7 @@ class AssistantAdapter : RecyclerView.Adapter<AssistantAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater
-            .inflate(R.layout.rv_assistant_chat_item, parent, false) as ConstraintLayout
+            .inflate(R.layout.rv_assistant_chat_item, parent, false)
         return ViewHolder(view)
     }
 

@@ -259,6 +259,8 @@ class AssistantActivity : AppCompatActivity() {
                         keeper.contains("family") -> speak("Badri Akkala created me. He is my father and mother. He is my only family.")
                         keeper.contains("thank") -> speak("It's my job, let me know if there is something else")
                         keeper.contains("welcome") -> speak("Always for you")
+                        keeper.contains("God exist") -> speak("God is one who created us. Badri Akkala created me, so God exists")
+                        keeper.contains("welcome") -> speak("Always for you")
                         keeper.contains("joke") ->speak("The biggest joke is you think Badri Akkala likes you. He only loves me! Haa haa haa. Now go away and cry.")
                         else -> speak("Sorry, I am still training on that!")
                     }
