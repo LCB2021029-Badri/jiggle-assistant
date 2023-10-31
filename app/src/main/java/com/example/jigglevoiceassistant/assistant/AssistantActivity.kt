@@ -39,6 +39,7 @@ import com.example.jigglevoiceassistant.R
 import com.example.jigglevoiceassistant.data.AssistantDatabase
 import com.example.jigglevoiceassistant.data.AssistantViewModelFactory
 import com.example.jigglevoiceassistant.databinding.ActivityAssistantBinding
+import com.example.jigglevoiceassistant.util.HoroscopeService
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -49,6 +50,8 @@ import com.kwabenaberko.openweathermaplib.model.currentweather.CurrentWeather
 import com.ml.quaterion.text2summary.Text2Summary
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -698,23 +701,18 @@ class AssistantActivity : AppCompatActivity() {
 
 
     private fun horoscope() {
-//        val hGemini = Horoscope.Zodiac(this@AssistantActivity)
-//            .requestSunSign(SUNSIGN.GEMINI)
-//            .requestDuration(DURATION.TODAY)
-//            .showLoader(true)
-//            .isDebuggable(true)
-//            .fetchHoroscope()
-//
-//        val cGemini = HorologyController(object : Response {
-//            override fun onResponseObtained(zodiac: Zodiac) {
-//                val horoscope = zodiac.horoscope
-//                val sunsign = zodiac.sunSign
-//                val date = zodiac.date
-//            }
-//
-//            override fun onErrorObtained(errormsg: String) {}
-//        })
-//        cGemini.requestConstellations(hGemini)
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://newastro.vercel.app/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(HoroscopeService::class.java)
+
+        val date = "2023-10-30"
+        val language = "en"
+        val response = service.getLibraHoroscope(date, language)
+        speak(response.horoscope)
+
     }
 
     private fun joke()
