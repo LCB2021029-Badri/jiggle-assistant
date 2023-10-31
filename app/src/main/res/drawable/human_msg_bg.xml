@@ -4,9 +4,9 @@
     <solid
         android:color="@color/myYellow"/>
 
-    <stroke
-        android:width="0.5dp"
-        android:color="#ffff" />
+<!--    <stroke-->
+<!--        android:width="0.5dp"-->
+<!--        android:color="#ffff" />-->
 
     <padding
         android:left="10dp"

@@ -4,9 +4,9 @@
     <solid
         android:color="@color/myNavBarBg"/>
 
-    <stroke
-        android:width="0.3dp"
-        android:color="#ffff" />
+<!--    <stroke-->
+<!--        android:width="0.3dp"-->
+<!--        android:color="#ffff" />-->
 
     <padding
         android:left="10dp"
